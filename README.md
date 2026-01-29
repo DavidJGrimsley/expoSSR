@@ -1,50 +1,55 @@
-# Welcome to your Expo app 👋
+# SSR on SDK 55 (Minimal Repro) (Using canary for latest updates)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Minimal, SSR-only Expo Router project for SDK 55. This repo is intentionally small to make SSR behavior and configuration easy to inspect and report.
 
-## Get started
+## Important Changes
+- Requires Expo SDK 55+.
+- Set web output to `"server"` in `app.json`:
 
-1. Install dependencies
+```json
+{
+	"expo": {
+		"web": { "output": "server" }
+	}
+}
+```
+- Enable server rendering for Expo Router in `app.json` plugins:
 
-   ```bash
-   npm install
-   ```
+```json
+"plugins": [
+	["expo-router", { "unstable_useServerRendering": true }]
+]
+```
+- Avoid `generateStaticParams()` for SSR dynamic routes — `generateStaticParams` is for SSG (pre-rendering), not runtime SSR.
 
-2. Start the app
+## What SSR does (and does not do)
 
-   ```bash
-   npx expo start
-   ```
+### ✅ What it does
+- Renders HTML on each request for web output when `web.output` is set to `server`.
+- Injects `<Head>` tags from route components into the server response.
+- Supports dynamic routes without `generateStaticParams`.
 
-In the output, you'll find options to open the app in a
+### ❌ What it does not do
+- It does not pre-generate HTML files (that’s static rendering).
+- It does not require data loaders; SSR works with without them.
+- It does not need API routes 
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Production (Express) Testing
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+SSR requires a runtime server in production. EAS Hosting can run the Expo server runtime for you after `expo export`, but it does not generate(or need) a custom server file. For third-party hosting (for example, a Plesk VPS), export the web build, then run the Express server:
 
 ```bash
-npm run reset-project
+npm run export-web
+npm run serve-express-server
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The server entry lives in server.js and serves `dist/client` while delegating SSR requests to `dist/server`.
 
-## Learn more
+## Production (Express) 3rd Party Deployment
 
-To learn more about developing your project with Expo, look at the following resources:
+On Plesk
+- Upload the server.js, package.json, and entire dist folder to the project root directory. 
+- Click NPM install
+- Click restart app (this automatically starts the Express server.js which serves the app)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Note: Server-side rendering (SSR) only affects web. Native mobile apps run the React Native bundle on-device and do not consume server-rendered HTML. You only need a server for API routes or if your mobile app must call a backend origin.
