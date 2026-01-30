@@ -5,6 +5,7 @@ const { createRequestHandler } = require('expo-server/adapter/express');
 
 const express = require('express');
 const compression = require('compression');
+const morgan = require('morgan');
 
 const CLIENT_BUILD_DIR = path.join(process.cwd(), 'dist/client');
 const SERVER_BUILD_DIR = path.join(process.cwd(), 'dist/server');
@@ -15,6 +16,7 @@ app.use(compression());
 app.disable('x-powered-by');
 process.env.NODE_ENV = 'production';
 
+// app.use(morgan('tiny'));
 
 app.use(
   express.static(CLIENT_BUILD_DIR, {
