@@ -30,6 +30,7 @@
         "expo-router",
         {
           "unstable_useServerRendering": true,
+          "unstable_useServerDataLoaders": true,
           "origin": "http://localhost:8081/"
         }
       ],

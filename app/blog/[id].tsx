@@ -95,6 +95,32 @@ export default function PostPage() {
 
         {!loading && !error && post && (
           <>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoTitle}>🔄 Client-Side Fetch + API Route</Text>
+              <Text style={styles.infoText}>
+                This page uses <Text style={styles.bold}>client-side fetching</Text> to call an{' '}
+                <Text style={styles.bold}>API route</Text> (/api/blog/{postId}). The flow:
+              </Text>
+              <Text style={styles.infoStep}>
+                1. Component mounts with loading state
+              </Text>
+              <Text style={styles.infoStep}>
+                2. useEffect triggers fetch to server API route
+              </Text>
+              <Text style={styles.infoStep}>
+                3. API route processes request on server
+              </Text>
+              <Text style={styles.infoStep}>
+                4. Response returns to client
+              </Text>
+              <Text style={styles.infoStep}>
+                5. setState updates and re-renders with content
+              </Text>
+              <Text style={styles.infoNote}>
+                💡 Compare this to /blog-loader/{postId} which uses data loaders for instant rendering!
+              </Text>
+            </View>
+
             <Text style={styles.title}>{post.title}</Text>
             <Text style={styles.metaText}>
               {post.author} • {post.date} • {post.readTime} min read
@@ -135,6 +161,51 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   errorText: { color: '#cc0000' },
+  infoBox: {
+    backgroundColor: '#fff3e0',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF9800',
+    borderWidth: 3,
+    borderColor: '#FF9800',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 10,
+    color: '#E65100',
+  },
+  infoText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#333',
+    marginBottom: 10,
+  },
+  infoStep: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#333',
+    marginBottom: 4,
+    marginLeft: 8,
+  },
+  infoNote: {
+    fontSize: 13,
+    color: '#E65100',
+    marginTop: 10,
+    fontStyle: 'italic',
+    lineHeight: 18,
+  },
+  bold: {
+    fontWeight: '700',
+    color: '#111',
+  },
   title: { fontSize: 24, fontWeight: '700', marginBottom: 8 },
   metaText: { color: '#666', marginBottom: 12 },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },

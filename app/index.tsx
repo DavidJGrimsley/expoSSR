@@ -118,6 +118,38 @@ export default function Index() {
           Explore different data fetching patterns and server capabilities
         </Text>
 
+        <Link href="/examples/data-loaders" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>📦 Data Loaders (NEW!)</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Server-loaded</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Comprehensive guide to Expo Router data loaders with comparisons
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
+        <Link href="/examples/suspense" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>🎭 Suspense Patterns (NEW!)</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Progressive Rendering</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Learn nested Suspense boundaries and the resource pattern for client-side loading
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
         <Link href="/examples/static" asChild>
           <Pressable>
             {({ pressed }) => (
@@ -181,7 +213,7 @@ export default function Index() {
             {({ pressed }) => (
               <View style={[styles.card, pressed && styles.cardPressed]}>
                 <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>📝 Blog Posts</Text>
+                  <Text style={styles.cardTitle}>📝 Blog (Client Fetch)</Text>
                   <Text style={styles.badge}>API-powered</Text>
                 </View>
                 {blogLoading && (
@@ -196,6 +228,22 @@ export default function Index() {
                     {blogPreview.title} — {blogPreview.excerpt}
                   </Text>
                 )}
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
+        <Link href="/blog-loader" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>📦 Blog (Data Loaders)</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Server-loaded</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Same blog content, but loaded server-side for instant rendering
+                </Text>
               </View>
             )}
           </Pressable>
@@ -287,6 +335,11 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
+  highlightCard: {
+    borderColor: '#0066cc',
+    borderWidth: 3,
+    backgroundColor: '#f0f7ff',
+  },
   cardPressed: {
     backgroundColor: '#f0f7ff',
     borderColor: '#0066cc',
@@ -312,6 +365,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
+  },
+  highlightBadge: {
+    backgroundColor: '#0066cc',
+    color: '#fff',
   },
   cardPreview: { 
     fontSize: 15, 
