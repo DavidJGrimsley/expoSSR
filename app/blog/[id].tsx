@@ -1,12 +1,74 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+
+type BlogPost = {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  date: string;
+  readTime: number;
+  tags: string[];
+};
+
+type BlogDetailResponse = {
+  success: boolean;
+  kind: 'detail';
+  data: BlogPost;
+  error?: string;
+};
 
 export default function PostPage() {
   const { id } = useLocalSearchParams();
-  const postId = Array.isArray(id) ? id[0] : id ?? '1';
-  const title = `Post ${postId}`;
-  const description = `SSR dynamic route with params: ${postId}`;
+  const postId = Array.isArray(id) ? id[0] : id;
+
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fallbackTitle = useMemo(() => `Post ${postId ?? ''}`.trim(), [postId]);
+
+  useEffect(() => {
+    if (!postId) {
+      setError('Missing post id');
+      setLoading(false);
+      return;
+    }
+
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`/api/blog/${encodeURIComponent(postId)}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result: BlogDetailResponse = await response.json();
+
+        if (result.success && result.kind === 'detail') {
+          setPost(result.data);
+        } else {
+          setError(result.error || 'Failed to fetch post');
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        setError(`Error fetching post: ${message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postId]);
+
+  const title = post?.title ?? fallbackTitle;
+  const description = post ? `${post.title} by ${post.author}` : 'Blog post detail page';
 
   return (
     <>
@@ -18,8 +80,43 @@ export default function PostPage() {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.body}>This route renders dynamically without data loaders.</Text>
+        {loading && (
+          <View style={styles.centerContent}>
+            <ActivityIndicator size="large" color="#0066cc" />
+            <Text style={styles.loadingText}>Loading post...</Text>
+          </View>
+        )}
+
+        {error && !loading && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
+
+        {!loading && !error && post && (
+          <>
+            <Text style={styles.title}>{post.title}</Text>
+            <Text style={styles.metaText}>
+              {post.author} • {post.date} • {post.readTime} min read
+            </Text>
+            <View style={styles.tagRow}>
+              {post.tags.map((tag) => (
+                <Text key={tag} style={styles.tag}>
+                  {tag}
+                </Text>
+              ))}
+            </View>
+            <Text style={styles.body}>{post.content}</Text>
+          </>
+        )}
+
+        <View style={styles.footer}>
+          <Link href="/blog">
+            <Link.Trigger>
+              <Text style={styles.backLink}>← Back to Blog</Text>
+            </Link.Trigger>
+          </Link>
+        </View>
       </View>
     </>
   );
@@ -27,6 +124,29 @@ export default function PostPage() {
 
 const styles = StyleSheet.create({
   container: { padding: 16 },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 8 },
-  body: { color: '#333' },
+  centerContent: { alignItems: 'center', paddingVertical: 24 },
+  loadingText: { marginTop: 8, color: '#666' },
+  errorContainer: {
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#ffe6e6',
+    borderLeftWidth: 4,
+    borderLeftColor: '#cc0000',
+    marginBottom: 16,
+  },
+  errorText: { color: '#cc0000' },
+  title: { fontSize: 24, fontWeight: '700', marginBottom: 8 },
+  metaText: { color: '#666', marginBottom: 12 },
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+  tag: {
+    backgroundColor: '#eef5ff',
+    color: '#2a5bd7',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    fontSize: 12,
+  },
+  body: { fontSize: 15, lineHeight: 22, color: '#333' },
+  footer: { marginTop: 24 },
+  backLink: { color: '#0066cc', fontWeight: '600' },
 });

@@ -1,90 +1,227 @@
-import { Link, useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Link } from 'expo-router';
+import Head from 'expo-router/head';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-const posts = [
-  { id: '1', title: 'First Post', description: 'An intro post to test SSR and meta tags.' },
-  { id: '2', title: 'Second Post', description: 'Another post to verify dynamic routing.' },
-];
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  readTime: number;
+}
+
+interface BlogResponse {
+  success: boolean;
+  kind: 'list';
+  data: BlogPost[];
+  total: number;
+  limit: number;
+  offset: number;
+  error?: string;
+}
 
 export default function BlogIndex() {
-  const router = useRouter();
-  const [postId, setPostId] = useState('');
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const goToPost = () => {
-    const trimmed = postId.trim();
-    if (!trimmed) return;
-    router.push(`/blog/${trimmed}`);
+  useEffect(() => {
+    // Fetch blog posts from the API route
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/blog?limit=10&offset=0');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result: BlogResponse = await response.json();
+        
+        if (result.success && result.kind === 'list') {
+          setPosts(result.data);
+        } else {
+          setError(result.error || 'Failed to fetch posts');
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        setError(`Error fetching posts: ${message}`);
+        console.error('Fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    // Parse as local date to avoid timezone offset issues
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Blog</Text>
-      <Text style={styles.body}>
-        Dynamic SSR proof: request a new URL like /blog/123 and confirm the raw HTML
-        contains <Text style={styles.mono}>&lt;title&gt;Post 123&lt;/title&gt;</Text> and matching meta tags.
-        Seeing “Post 1” in the tab is expected, but the raw HTML response is the proof.
-      </Text>
+    <>
+      <Head>
+        <title>Blog</title>
+        <meta name="description" content="Blog posts about Expo Router and web development." />
+      </Head>
+      <ScrollView style={styles.container}>
+        <Text style={styles.pageTitle}>Blog</Text>
+        <Text style={styles.subtitle}>
+          Articles about Expo Router, SSR, API routes, and more. The data below is fetched from an API route. All of the posts are fake and the names are purely to be comical and to pay homage to helpful developers.
+        </Text>
 
-      <Text style={styles.sectionTitle}>Go to a post</Text>
-      <Text style={styles.body}>
-        Enter a post ID and navigate. This mirrors how a real app would deep-link to
-        a user’s post in a UGC feed.
-      </Text>
-      <View style={styles.inputRow}>
-        <TextInput
-          value={postId}
-          onChangeText={setPostId}
-          placeholder="e.g. 123"
-          keyboardType="number-pad"
-          style={styles.input}
-          returnKeyType="go"
-          onSubmitEditing={goToPost}
-        />
-        <Pressable style={styles.button} onPress={goToPost}>
-          <Text style={styles.buttonText}>Go</Text>
-        </Pressable>
-      </View>
+        {loading && (
+          <View style={styles.centerContent}>
+            <ActivityIndicator size="large" color="#0066cc" />
+            <Text style={styles.loadingText}>Loading posts...</Text>
+          </View>
+        )}
 
-      {posts.map((p) => (
-        <View key={p.id} style={styles.post}>
-          <Link href={`/blog/${p.id}`}>
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Error: {error}</Text>
+          </View>
+        )}
+
+        {!loading && !error && posts.length === 0 && (
+          <View style={styles.centerContent}>
+            <Text style={styles.emptyText}>No posts found.</Text>
+          </View>
+        )}
+
+        {!loading && !error && posts.length > 0 && (
+          <View style={styles.postsList}>
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/blog/${post.id}`}
+                asChild
+              >
+                <View style={styles.postCard}>
+                  <Text style={styles.postTitle}>{post.title}</Text>
+                  <Text style={styles.postExcerpt}>{post.excerpt}</Text>
+                  <View style={styles.postMeta}>
+                    <Text style={styles.metaText}>
+                      {post.author} • {formatDate(post.date)} • {post.readTime} min read
+                    </Text>
+                  </View>
+                </View>
+              </Link>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.footer}>
+          <Link href="/">
             <Link.Trigger>
-              <Text style={styles.postTitle}>{p.title}</Text>
+              <Text style={styles.backLink}>← Back to Home</Text>
             </Link.Trigger>
-            <Link.Preview />
           </Link>
-          <Text style={styles.postDesc}>{p.description}</Text>
         </View>
-      ))}
-    </View>
+      </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 8 },
-  body: { fontSize: 14, color: '#444', marginBottom: 12 },
-  mono: { fontFamily: 'monospace' },
-  sectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 6 },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
-  input: {
+  container: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: '#f5f5f5',
+  },
+  pageTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginTop: 20,
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  subtitle: {
     fontSize: 16,
+    color: '#666',
+    marginHorizontal: 16,
+    marginBottom: 24,
   },
-  button: {
-    backgroundColor: '#0066cc',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 300,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#666',
+  },
+  errorContainer: {
+    marginHorizontal: 16,
+    marginVertical: 12,
+    padding: 12,
+    backgroundColor: '#ffe6e6',
     borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#cc0000',
   },
-  buttonText: { color: '#fff', fontWeight: '600' },
-  post: { marginBottom: 12 },
-  postTitle: { fontSize: 18, color: '#0066cc' },
-  postDesc: { color: '#444' },
+  errorText: {
+    color: '#cc0000',
+    fontSize: 14,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#999',
+  },
+  postsList: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+  },
+  postCard: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  postTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0066cc',
+    marginBottom: 8,
+  },
+  postExcerpt: {
+    fontSize: 14,
+    color: '#444',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  postMeta: {
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 8,
+  },
+  metaText: {
+    fontSize: 12,
+    color: '#999',
+  },
+  footer: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    marginTop: 12,
+  },
+  backLink: {
+    fontSize: 14,
+    color: '#0066cc',
+    fontWeight: '500',
+  },
 });
