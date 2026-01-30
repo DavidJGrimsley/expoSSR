@@ -225,16 +225,23 @@ export default function SuspensePage() {
             2. Nested boundaries enable progressive rendering (fast content shows first)
           </Text>
           <Text style={styles.keyPoint}>
-            3. Components throw Promises to trigger Suspense (standard Suspense pattern)
+            3. Data loaders serialize return values - can't pass live Promise objects
           </Text>
           <Text style={styles.keyPoint}>
-            4. With data loaders: call useLoaderData in child components + wrap with Suspense
+            4. React's `use` hook isn't fully supported in React Native yet - it would let you 
+            unwrap Promises directly (simpler code), but without it you need the resource pattern
           </Text>
           <Text style={styles.keyPoint}>
-            5. For progressive loading with loaders: use separate routes/loaders per section
+            5. Suspense requires resource pattern: throw promises WITHOUT setState during render
           </Text>
           <Text style={styles.keyPoint}>
-            6. This creates better perceived performance than showing a single loading state
+            6. With data loaders: call useLoaderData in child + wrap with Suspense (all data arrives together)
+          </Text>
+          <Text style={styles.keyPoint}>
+            7. For progressive loading with loaders: need separate routes with separate loaders
+          </Text>
+          <Text style={styles.keyPoint}>
+            8. Resource pattern manages promise state outside React to avoid render-time updates
           </Text>
         </View>
       </View>

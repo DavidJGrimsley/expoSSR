@@ -28,7 +28,8 @@
       [
         "expo-router",
         {
-          "unstable_useServerRendering": true
+          "unstable_useServerRendering": true,
+          "unstable_useServerDataLoaders": true
         }
       ],
       [
