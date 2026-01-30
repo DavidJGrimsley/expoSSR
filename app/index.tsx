@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SSR_DATA } from '../data/SSR';
@@ -27,6 +27,9 @@ type BlogListResponse = {
 };
 
 export default function Index() {
+  const taskHref = '/examples/tasks' as Href;
+  const gardenHref = '/examples/garden' as Href;
+
   const [apiInfo, setApiInfo] = useState<ApiInfoResponse | null>(null);
   const [apiLoading, setApiLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -172,6 +175,7 @@ export default function Index() {
           </Pressable>
         </Link>
 
+        
         <Link href="/blog" asChild>
           <Pressable>
             {({ pressed }) => (
@@ -196,6 +200,55 @@ export default function Index() {
             )}
           </Pressable>
         </Link>
+
+        <Link href={taskHref} asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>✅ Simple Tasks</Text>
+                  <Text style={styles.badge}>runTask + deferTask</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Start a task and watch runTask vs. deferTask behavior.
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
+        <Link href={gardenHref} asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>🌱 Pixel Garden</Text>
+                  <Text style={styles.badge}>Async growth</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Plant seeds now, blooms arrive after the response.
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+        
+        <Link href="/examples/blockchain" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>🔗 Blockchain Demo</Text>
+                  <Text style={styles.badge}>Hashing</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Add blocks and view a simple linked chain (local simulation).
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
       </View>
     </ScrollView>
   );
