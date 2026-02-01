@@ -123,7 +123,7 @@ export default function Index() {
             {({ pressed }) => (
               <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
                 <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>📦 Data Loaders (NEW!)</Text>
+                  <Text style={styles.cardTitle}>📦 Data Loaders </Text>
                   <Text style={[styles.badge, styles.highlightBadge]}>Server-loaded</Text>
                 </View>
                 <Text style={styles.cardPreview} numberOfLines={1}>
@@ -139,7 +139,7 @@ export default function Index() {
             {({ pressed }) => (
               <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
                 <View style={styles.cardHeader}>
-                  <Text style={styles.cardTitle}>🎭 Suspense Patterns (NEW!)</Text>
+                  <Text style={styles.cardTitle}>🎭 Suspense Patterns (Data-Loaders)</Text>
                   <Text style={[styles.badge, styles.highlightBadge]}>Progressive Rendering</Text>
                 </View>
                 <Text style={styles.cardPreview} numberOfLines={1}>
@@ -271,10 +271,26 @@ export default function Index() {
               <View style={[styles.card, pressed && styles.cardPressed]}>
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardTitle}>🌱 Pixel Garden</Text>
-                  <Text style={styles.badge}>Async growth</Text>
+                  <Text style={styles.badge}>Client Fetch + API Routes</Text>
                 </View>
                 <Text style={styles.cardPreview} numberOfLines={1}>
-                  Plant seeds now, blooms arrive after the response.
+                  Plant seeds now, blooms arrive after the response (client-side fetch).
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
+        <Link href="/examples/garden-loader" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>🌱 Pixel Garden (Data Loader)</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Server-loaded</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Same garden, but with server-side data loader for instant initial render.
                 </Text>
               </View>
             )}
@@ -287,10 +303,60 @@ export default function Index() {
               <View style={[styles.card, pressed && styles.cardPressed]}>
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardTitle}>🔗 Blockchain Demo</Text>
-                  <Text style={styles.badge}>Hashing</Text>
+                  <Text style={styles.badge}>Client Fetch + API Routes</Text>
                 </View>
                 <Text style={styles.cardPreview} numberOfLines={1}>
-                  Add blocks and view a simple linked chain (local simulation).
+                  Add blocks and view a simple linked chain (client-side fetch).
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
+        <Link href="/examples/blockchain-loader" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>🔗 Blockchain (Data Loader)</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Server-loaded</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Same blockchain, but with server-side data loader for instant chain display.
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+       
+        <Link href="/examples/error" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>⚠️ Error Example</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Server-loaded</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={1}>
+                  Error boundaries in action.
+                </Text>
+              </View>
+            )}
+          </Pressable>
+        </Link>
+
+        {/* Minimal reproduction: link directly to the copied drawer route's id page */}
+        <Link href="/6f32f42e-5f3c-4bf7-8c72-0a7c56000101" asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>🧪 Drawer Data-Loader Repro</Text>
+                  <Text style={[styles.badge, styles.highlightBadge]}>Group route</Text>
+                </View>
+                <Text style={styles.cardPreview} numberOfLines={2}>
+                  Navigate directly to the ID route that lives inside the `(drawer)` group.
+                  This reproduces the loader 404 bug where the loader endpoint path is missing the group segment.
                 </Text>
               </View>
             )}

@@ -3,8 +3,18 @@ import Head from 'expo-router/head';
 import { Suspense } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+type LoaderRequest = {
+  method?: string;
+  headers?: {
+    get?: (name: string) => string | null;
+  };
+};
+
 // Simulate different data fetching scenarios
-export async function loader(request: Request | undefined) {
+export async function loader(
+  request: LoaderRequest | undefined,
+  _params: Record<string, string | string[]>
+) {
   // Simulate multiple async operations
   await new Promise(resolve => setTimeout(resolve, 800));
   
@@ -39,9 +49,9 @@ export async function loader(request: Request | undefined) {
   
   // Demonstrate request access (only available in server mode)
   const requestInfo = request ? {
-    method: request.method,
-    hasHeaders: true,
-    userAgent: request.headers.get('user-agent')?.substring(0, 50) + '...' || 'unknown',
+    method: request.method ?? 'GET',
+    hasHeaders: Boolean(request.headers?.get),
+    userAgent: request.headers?.get?.('user-agent')?.substring(0, 50) + '...' || 'unknown',
   } : null;
   
   return {
@@ -138,13 +148,13 @@ function DataLoadersContent() {
             <View style={styles.methodContent}>
               <Text style={styles.methodTitle}>Client-Side Fetch (/blog)</Text>
               <Text style={styles.methodDesc}>
-                Component mounts → useEffect → fetch('/api/blog') → setState → re-render
+                Component mounts → useEffect → fetch(&apos;/api/blog&apos;) → setState → re-render
               </Text>
               <Text style={styles.methodPros}>✅ Interactive updates, polling, real-time data</Text>
               <Text style={styles.methodCons}>❌ Loading states, no SEO, waterfall delays, layout shift</Text>
               <Text style={styles.methodNote}>
                 💡 The /blog route uses client-side fetch that calls an API route (/api/blog), but it could be making a call to any other API. 
-                It's perfect for dynamic updates after page load.
+                It&apos;s perfect for dynamic updates after page load.
               </Text>
               <Link href="/blog">
                 <Text style={styles.methodLink}>Example: /blog →</Text>
@@ -237,7 +247,7 @@ function DataLoadersContent() {
             <InfoRow label="Method" value={data.requestInfo.method} />
             <InfoRow label="User Agent" value={data.requestInfo.userAgent} />
             <Text style={styles.requestNote}>
-              ℹ️ In server mode (web.output: "server"), loaders receive the incoming HTTP
+              ℹ️ In server mode (web.output: &quot;server&quot;), loaders receive the incoming HTTP
               request. You can access headers, cookies, query params, and more.
             </Text>
           </View>
@@ -247,7 +257,7 @@ function DataLoadersContent() {
           <View style={[styles.section, styles.staticSection]}>
             <Text style={styles.sectionTitle}>📦 Static Export Mode</Text>
             <Text style={styles.staticNote}>
-              This would mean the app was built with web.output: "static". The loader
+              This would mean the app was built with web.output: &quot;static&quot;. The loader
               ran at build time, and request is undefined. Data is baked into HTML files.
             </Text>
           </View>
@@ -329,7 +339,7 @@ function DataLoadersContent() {
             <Text style={styles.useCaseItem}>✓ Data is needed at page load (blog posts, products)</Text>
             <Text style={styles.useCaseItem}>✓ SEO is critical (landing pages, articles)</Text>
             <Text style={styles.useCaseItem}>✓ You want the fastest perceived performance</Text>
-            <Text style={styles.useCaseItem}>✓ Data doesn't change during page view</Text>
+            <Text style={styles.useCaseItem}>✓ Data doesn&apos;t change during page view</Text>
           </View>
 
           <View style={styles.useCase}>
@@ -344,7 +354,7 @@ function DataLoadersContent() {
             <Text style={styles.useCaseTitle}>Use Client Fetch When:</Text>
             <Text style={styles.useCaseItem}>✓ Data updates based on user interaction</Text>
             <Text style={styles.useCaseItem}>✓ Infinite scroll or pagination</Text>
-            <Text style={styles.useCaseItem}>✓ Public APIs that don't need secrets</Text>
+            <Text style={styles.useCaseItem}>✓ Public APIs that don&apos;t need secrets</Text>
             <Text style={styles.useCaseItem}>✓ SEO is not a concern</Text>
           </View>
 
@@ -362,7 +372,7 @@ function DataLoadersContent() {
           <Text style={styles.sectionTitle}>⚡ Static vs Server Rendering</Text>
           
           <View style={styles.renderModeBox}>
-            <Text style={styles.renderModeLabel}>web.output: "static"</Text>
+            <Text style={styles.renderModeLabel}>web.output: &quot;static&quot;</Text>
             <Text style={styles.renderModeText}>
               • Loader runs at build time (npx expo export){'\n'}
               • Data baked into HTML files{'\n'}
@@ -374,7 +384,7 @@ function DataLoadersContent() {
           </View>
 
           <View style={[styles.renderModeBox, styles.serverBox]}>
-            <Text style={styles.renderModeLabel}>web.output: "server" (Current)</Text>
+            <Text style={styles.renderModeLabel}>web.output: &quot;server&quot; (Current)</Text>
             <Text style={styles.renderModeText}>
               • Loader runs on each request{'\n'}
               • Dynamic, personalized content{'\n'}
@@ -441,8 +451,18 @@ function DataLoadersContent() {
           />
           <ExampleLink 
             href="/blog-loader"
-            title="Data Loaders"
+            title="Blog with Data Loaders"
             description="Same blog, but with server-side data loaders"
+          />
+          <ExampleLink 
+            href="/examples/garden-loader"
+            title="Garden with Data Loader"
+            description="Pixel garden with loader + API routes + background tasks"
+          />
+          <ExampleLink 
+            href="/examples/blockchain-loader"
+            title="Blockchain with Data Loader"
+            description="Blockchain demo with loader + Node.js crypto APIs"
           />
           <ExampleLink 
             href="/examples/api"

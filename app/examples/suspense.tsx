@@ -3,6 +3,11 @@ import Head from 'expo-router/head';
 import { Suspense, useEffect } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+type SuspenseData = {
+  message: string;
+  timestamp: string;
+};
+
 // Simple async function to simulate data fetching
 async function fetchData(delay: number, label: string) {
   await new Promise(resolve => setTimeout(resolve, delay));
@@ -16,8 +21,8 @@ async function fetchData(delay: number, label: string) {
 // This is the standard React Suspense pattern - throw a promise while pending
 function createResource<T>(fetchFn: () => Promise<T>) {
   let status = 'pending';
-  let result: T;
-  let error: Error;
+  let result: T | null = null;
+  let error: Error | null = null;
   
   const suspender = fetchFn().then(
     (data) => {
@@ -31,27 +36,28 @@ function createResource<T>(fetchFn: () => Promise<T>) {
   );
 
   return {
-    read() {
+    read(): T {
       if (status === 'pending') {
         throw suspender; // Suspense will catch this
       } else if (status === 'error') {
         throw error;
       } else if (status === 'success') {
-        return result;
+        return result as T;
       }
+      throw new Error('Unexpected Suspense resource state');
     }
   };
 }
 
 // Create resources for each data source (outside component to prevent recreation)
-const resources = {
-  quick: null as ReturnType<typeof createResource> | null,
-  medium: null as ReturnType<typeof createResource> | null,
-  slow: null as ReturnType<typeof createResource> | null,
+const resources: Record<'quick' | 'medium' | 'slow', ReturnType<typeof createResource<SuspenseData>> | null> = {
+  quick: null,
+  medium: null,
+  slow: null,
 };
 
 // Helper to get or create a resource
-function getResource<T>(key: 'quick' | 'medium' | 'slow', fetchFn: () => Promise<T>) {
+function getResource(key: 'quick' | 'medium' | 'slow', fetchFn: () => Promise<SuspenseData>) {
   if (!resources[key]) {
     resources[key] = createResource(fetchFn);
   }
@@ -168,7 +174,7 @@ export default function SuspensePage() {
           <View style={styles.howItWorksBox}>
             <Text style={styles.howItWorksTitle}>🔧 The Resource Pattern</Text>
             <Text style={styles.howItWorksText}>
-              Each component uses a "resource" pattern that throws a Promise while loading, 
+              Each component uses a &quot;resource&quot; pattern that throws a Promise while loading, 
               triggering React Suspense. When the Promise resolves, the resource updates its 
               internal state and React re-renders with the data.
             </Text>
@@ -207,7 +213,7 @@ export default function SuspensePage() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Level 3: Slow Loading</Text>
             <Text style={styles.sectionSubtitle}>
-              Deeply nested Suspense — doesn't block components above
+              Deeply nested Suspense — doesn&apos;t block components above
             </Text>
             <Suspense fallback={<SlowLoading />}>
               <SlowDataComponent />
@@ -280,8 +286,8 @@ export default function SuspensePage() {
             <View style={styles.takeawayItem}>
               <Text style={styles.takeawayNumber}>4</Text>
               <Text style={styles.takeawayText}>
-                <Text style={styles.bold}>React Native limitation:</Text> React's <Text style={styles.mono}>use</Text> hook 
-                isn't fully supported yet. Without it, you need the resource pattern.
+                <Text style={styles.bold}>React Native limitation:</Text> React&apos;s <Text style={styles.mono}>use</Text> hook 
+                isn&apos;t fully supported yet. Without it, you need the resource pattern.
               </Text>
             </View>
 
@@ -289,7 +295,7 @@ export default function SuspensePage() {
               <Text style={styles.takeawayNumber}>5</Text>
               <Text style={styles.takeawayText}>
                 <Text style={styles.bold}>Data loaders are different:</Text> Loaders serialize return values 
-                — can't pass live Promise objects. All data arrives together server-side.
+                — can&apos;t pass live Promise objects. All data arrives together server-side.
               </Text>
             </View>
 
