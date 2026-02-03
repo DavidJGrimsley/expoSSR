@@ -175,7 +175,7 @@ function DataLoadersContent() {
                 💡 API routes are server-only endpoints perfect for form submissions, mutations, 
                 and data that client JavaScript needs to fetch dynamically.
               </Text>
-              <Link href="/examples/api">
+              <Link href="/examples/api-routes">
                 <Text style={styles.methodLink}>Example: /examples/api →</Text>
               </Link>
             </View>

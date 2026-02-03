@@ -1,0 +1,13 @@
+{
+    "id": "6f32f42e-5f3c-4bf7-8c72-0a7c56000101",
+    "workspaceId": "c0a5d5f2-5f9b-4a9a-96e6-49f130000101",
+    "leadId": "7a8e9e2a-1f1d-4d6d-b12b-7e5c2f9c0101",
+    "title": "Neon Drift",
+    "summary": "Cinematic narrative game exploring memory in a floating city.",
+    "status": "active",
+    "visibility": "public",
+    "startDate": "2026-01-10T00:00:00Z",
+    "dueDate": "2026-06-10T00:00:00Z",
+    "createdAt": "2026-01-10T12:05:00Z",
+    "updatedAt": "2026-01-26T09:45:00Z"
+  }

@@ -182,7 +182,7 @@ export default function Index() {
           </Pressable>
         </Link>
 
-        <Link href="/examples/api" asChild>
+        <Link href="/examples/api-routes" asChild>
           <Pressable>
             {({ pressed }) => (
               <View style={[styles.card, pressed && styles.cardPressed]}>
@@ -346,7 +346,7 @@ export default function Index() {
         </Link>
 
         {/* Minimal reproduction: link directly to the copied drawer route's id page */}
-        <Link href="/6f32f42e-5f3c-4bf7-8c72-0a7c56000101" asChild>
+        <Link href="/(tabs)" asChild>
           <Pressable>
             {({ pressed }) => (
               <View style={[styles.card, styles.highlightCard, pressed && styles.cardPressed]}>
@@ -355,8 +355,7 @@ export default function Index() {
                   <Text style={[styles.badge, styles.highlightBadge]}>Group route</Text>
                 </View>
                 <Text style={styles.cardPreview} numberOfLines={2}>
-                  Navigate directly to the ID route that lives inside the `(drawer)` group.
-                  This reproduces the loader 404 bug where the loader endpoint path is missing the group segment.
+                  Navigate to the tabs layout to test nested data-loader route inside a Parenthesized group.
                 </Text>
               </View>
             )}
