@@ -7,18 +7,20 @@ export default function PostPage() {
   const { id } = useLocalSearchParams();
   const postId = Array.isArray(id) ? id[0] : id ?? '1';
   const post = posts.find((p) => p.id === postId);
-  const title = `Post ${postId}`;
+  const title = id ? `Post ${postId}` : 'Post';
+  const instructions = "Right click this page and click 'view page source', not 'inspect'. The raw HTML contains the meta tags for this comic.";
 
   if (!post) {
     return (
       <>
         <Head>
-          <title>Post Not Found {title}</title>
+          <title>{title}</title>
           <meta name="description" content="This blog post does not exist." />
         </Head>
         <View style={styles.container}>
           <Text style={styles.title}>Post Not Found</Text>
           <Text style={styles.body}>This blog doesn&apos;t exist</Text>
+          <Text style={styles.body}>{instructions}</Text>
         </View>
       </>
     );
@@ -34,6 +36,8 @@ export default function PostPage() {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <View style={styles.container}>
+        <Text style={styles.title}>The purpose of this page is to demonstrate server-side rendering with dynamic routes.</Text>
+        <Text style={styles.body}>{instructions}</Text>
         <Text style={styles.title}>{post.title}</Text>
         <Text style={styles.body}>{post.description}</Text>
       </View>

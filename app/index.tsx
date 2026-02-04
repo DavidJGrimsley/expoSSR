@@ -20,6 +20,13 @@ export default function Index() {
         </Link.Trigger>
         <Link.Preview />
       </Link>
+
+      <Link href="/marvel-comics">
+        <Link.Trigger>
+          <Text style={styles.link}>Open Marvel Comics for dynamic routes</Text>
+        </Link.Trigger>
+        <Link.Preview />
+      </Link>
     </View>
   );
 }
