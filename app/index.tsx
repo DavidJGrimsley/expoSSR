@@ -10,8 +10,8 @@ export default function Index() {
       <Text style={styles.body}>
         To confirm SSR, fetch the raw HTML (View Source or curl/Invoke-WebRequest) and
         look for a route-specific <Text style={styles.mono}>&lt;title&gt;</Text> and
-        <Text style={styles.mono}> &lt;meta name="description"&gt;</Text> in the response.
-        The DOM inspector alone is not proof of SSR because it reflects the hydrated page.
+        <Text style={styles.mono}> &lt;meta name="description&quot;&gt;</Text> in the response.
+        The DOM inspector (devTools) alone is not proof of SSR because it reflects the hydrated page.
       </Text>
 
       <View style={styles.linkSection}>
@@ -22,6 +22,14 @@ export default function Index() {
           </Link.Trigger>
           <Link.Preview />
         </Link>
+
+        <Link href="/marvel-comics" style={styles.linkSpacing}>
+          <Link.Trigger>
+            <Text style={styles.link}>💥 Marvel Comics</Text>
+          </Link.Trigger>
+          <Link.Preview />
+        </Link>
+        
       </View>
 
       <View style={styles.linkSection}>
@@ -44,6 +52,13 @@ export default function Index() {
         <Link href="/examples/suspense" style={styles.linkSpacing}>
           <Link.Trigger>
             <Text style={styles.link}>⏱️ Suspense Demo</Text>
+          </Link.Trigger>
+          <Link.Preview />
+        </Link>
+        
+        <Link href="/marvel-comics-loader" style={styles.linkSpacing}>
+          <Link.Trigger>
+            <Text style={styles.link}>💥 Marvel Comics</Text>
           </Link.Trigger>
           <Link.Preview />
         </Link>
