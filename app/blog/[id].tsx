@@ -1,25 +1,41 @@
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { StyleSheet, Text, View } from 'react-native';
+import { posts } from '../../data/dummy';
 
 export default function PostPage() {
   const { id } = useLocalSearchParams();
   const postId = Array.isArray(id) ? id[0] : id ?? '1';
+  const post = posts.find((p) => p.id === postId);
   const title = `Post ${postId}`;
-  const description = `SSR dynamic route with params: ${postId}`;
+
+  if (!post) {
+    return (
+      <>
+        <Head>
+          <title>Post Not Found {title}</title>
+          <meta name="description" content="This blog post does not exist." />
+        </Head>
+        <View style={styles.container}>
+          <Text style={styles.title}>Post Not Found</Text>
+          <Text style={styles.body}>This blog doesn&apos;t exist</Text>
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content={description} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
+        <meta name="description" content={post.description} />
+        <meta property="og:title" content={post.title} />
+        <meta property="og:description" content={post.description} />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.body}>This route renders dynamically without data loaders.</Text>
+        <Text style={styles.title}>{post.title}</Text>
+        <Text style={styles.body}>{post.description}</Text>
       </View>
     </>
   );

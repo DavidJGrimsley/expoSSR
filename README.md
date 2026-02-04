@@ -2,6 +2,8 @@
 
 Minimal, SSR-only Expo Router project for SDK 55. This repo is intentionally small to make SSR behavior and configuration easy to inspect and report.
 
+**🔀 Want to see the contrast?** Check the [`contrast-ssg` branch](https://github.com/DavidJGrimsley/expoSSR/tree/contrast-ssg) for a static export (SSG) version that shows the difference between pre-generated HTML and runtime server rendering.
+
 ## Important Changes
 - Requires Expo SDK 55+.
 - Set web output to `"server"` in `app.json`:
