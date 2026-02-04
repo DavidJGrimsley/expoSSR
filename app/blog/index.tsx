@@ -1,11 +1,8 @@
 import { Link, useRouter } from 'expo-router';
+import Head from 'expo-router/head';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-
-const posts = [
-  { id: '1', title: 'First Post', description: 'An intro post to test SSR and meta tags.' },
-  { id: '2', title: 'Second Post', description: 'Another post to verify dynamic routing.' },
-];
+import { posts } from '../../data/dummy';
 
 export default function BlogIndex() {
   const router = useRouter();
@@ -18,8 +15,15 @@ export default function BlogIndex() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Blog</Text>
+    <>
+      <Head>
+        <title>Blog | SSR Test</title>
+        <meta name="description" content="Blog listing page to test static site generation." />
+        <meta property="og:title" content="Blog | SSR Test" />
+        <meta property="og:description" content="Blog listing page to test static site generation." />
+      </Head>
+      <View style={styles.container}>
+        <Text style={styles.title}>Blog</Text>
       <Text style={styles.body}>
         Dynamic SSR proof: request a new URL like /blog/123 and confirm the raw HTML
         contains <Text style={styles.mono}>&lt;title&gt;Post 123&lt;/title&gt;</Text> and matching meta tags.
@@ -58,6 +62,7 @@ export default function BlogIndex() {
         </View>
       ))}
     </View>
+    </>
   );
 }
 
