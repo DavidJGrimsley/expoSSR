@@ -14,7 +14,7 @@ export default function ComicPage() {
   const { id } = useLocalSearchParams();
   const [comic, setComic] = useState<Comic | null>(null);
   const [loading, setLoading] = useState(true);
-  const instructions = "Right click this page and click 'view page source', not 'inspect'. The raw HTML contains the meta tags for this comic.";
+  const instructions = "Export to dist. Serve locally. Right click this page and click 'view page source', not 'inspect'. The raw HTML contains the meta tags for this comic.";
 
   useEffect(() => {
     const fetchComic = async () => {

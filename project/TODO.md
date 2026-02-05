@@ -8,7 +8,7 @@ Generated from project/info.md.
 ## Milestones
 - [x] M1 — Foundations: minimal SSR routes + config
 - [x] M2 — SSR verification + minimal repro polish
-- [ ] M3 — Deployment-ready server + hosting notes
+- [x] M3 — Deployment-ready server + hosting notes
 
 ## File Routing & Structure
 - [x] Minimal routes: / (home), /examples (index), /examples/static, /examples/ssr

@@ -8,7 +8,7 @@ export default function PostPage() {
   const postId = Array.isArray(id) ? id[0] : id ?? '1';
   const post = posts.find((p) => p.id === postId);
   const title = id ? `Post ${postId}` : 'Post';
-  const instructions = "Right click this page and click 'view page source', not 'inspect'. The raw HTML contains the meta tags for this comic.";
+  const instructions = "Export to dist. Serve locally. Right click this page and click 'view page source', not 'inspect'. The raw HTML contains the meta tags for this comic.";
 
   if (!post) {
     return (
